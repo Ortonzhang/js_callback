@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>callback的心酸历程</title>
+    <!-- bower:css -->
+    <!-- endbower --> 
+</head>
+<body>
+    <div class="container">
+        <div class="bs-docs-section">
+            <h2>传统callback实现-嵌套</h2>
+            <p>
+                <button class="btn btn-primary primary-1">点击我请求数据</button>
+            </p>
+            <pre>
+                <code class="language-html" data-lang="js">
+                    <span>$('primary-1').click(functional(){</span>
+                        <span>$.ajax('./a.json').done(functional(a){</span>
+                            <span>$.ajax('./b.json').done(functional(b){</span>
+                                <span>$.ajax('./c.json').done(functional(c){</span>
+                                    .....
+                                <span>})</span>
+                            <span>})</span>
+                        <span>})</span>
+                    <span>})</span>
+                </code>
+            </pre> 
+            <p>
+                以上就是我们说的<code>回调地狱</code>,当请求越来越多的时候，不仅仅让代码显得更加难看、臃肿，也让项目变得越来越不好维护。
+            </p>   
+        </div>
+        <div class="bs-docs-section">
+            <h2>Promise-嵌套改成了链式调用</h2>
+            <p>
+                <button class="btn btn-primary primary-2">点击我请求数据</button>
+            </p>
+            <pre>
+                <code>
+                    // 首先定义个promise的函数
+
+                    function request(url){
+                        return new Promise((resolve, reject)=>{
+                            $.ajax(url).done(data=>{
+                                resolve(data)
+                            })
+                        })
+                    }
+                    // 方式一 下一个接口依赖上一个接口
+                    $('.primary-2').click(function(){
+                        request('./src/a.json').then((a)=>{
+                            console.log(a.data)
+                            return request('./src/b.json')
+                        }).then((b)=>{
+                            console.log(b.data)
+                            return request('./src/c.json')
+                        }).then((c)=>{
+                            console.log(c.data)
+                        })
+                    })
+
+                    // 方式二  只获取数据
+                    Promise.all([request('./src/a.json'), request('./src/b.json'), request('./src/c.json')]).then((data)=>{
+                        console.log(data)
+                    })
+
+                </code>
+            </pre>
+        </div>
+        <div class="bs-docs-section">
+            <h2>generator-函数执行暂停</h2>
+            <p>
+                <button class="btn btn-primary primary-3">点击我请求数据</button>
+            </p>
+            <pre>
+                <code>
+                    function request(url){
+                        $.ajax(url).done(data=>{
+                            generator.next(data)
+                        })
+                    }
+
+                    function* generatorInit(){
+                        let a = yield request('./src/a.json')
+                        let b = yield request('./src/b.json')
+                        let c = yield request('./src/c.json')
+                    }
+                    var generator = generatorInit()
+                    generator.next()
+                </code>
+            </pre>
+        </div>
+        <div class="bs-docs-section">
+            <h2>终极大法 async/await</h2>
+            <p>
+                <button class="btn btn-primary primary-4">async/await</button>
+            </p>
+            <pre>
+                <code>
+                    (async function getC(){
+                        let a = await $.ajax('./src/a.json')
+                        let b = await $.ajax('./src/b.json')
+                        let c = await $.ajax('./src/c.json')
+                        console.log(a,b,c)
+                    })()
+                </code>
+            </pre>
+        </div>
+        <p>
+            generator函数，yield 会等后面的函数执行完后，才会执行next方法，generator函数通过yield来实现callback
+            async/await同理
+        </p>
+    </div>
+    <!-- bower:js -->
+ 
+    <!-- endbower -->
+    <script>
+        // 传统回调地狱
+        $('.primary-1').click(function(){
+            $.ajax('./src/a.json').done((a)=>{
+                $.ajax('./src/b.json').done((b)=>{
+                    $.ajax('./src/c.json').done((c)=>{
+                        console.log('a=>'+ a.data, 'b=>'+ b.data, 'c=>'+ c.data)
+                    })
+                })
+            })
+        })
+
+
+        // promise 写法
+
+        // 首先定义个promise的函数
+
+        function request(url){
+            return new Promise((resolve, reject)=>{
+                $.ajax(url).done(data=>{
+                    resolve(data)
+                })
+            })
+        }
+
+        $('.primary-2').click(function(){
+            // Promise.all([request('./src/a.json'), request('./src/b.json'), request('./src/c.json')]).then((data)=>{
+            //     console.log(data)
+            // })
+            
+            request('./src/a.json').then((a)=>{
+                console.log(a.data)
+                return request('./src/b.json')
+            }).then((b)=>{
+                console.log(b.data)
+                return request('./src/c.json')
+            }).then((c)=>{
+                console.log(c.data)
+            })
+            
+        })
+
+
+        // generator 写法
+
+        $('.primary-3').click(function(){
+            function request(url){
+                $.ajax(url).done(data=>{
+                    generator.next(data)
+                })
+            }
+
+            function* generatorInit(){
+                let a = yield request('./src/a.json')
+                    console.log(a.data)
+                let b = yield request('./src/b.json')
+                    console.log(b.data)
+                let c = yield request('./src/c.json')
+                    console.log(c.data)
+            }
+
+            var generator = generatorInit()
+            generator.next()
+        })
+        $('.primary-4').click(function(){
+            (async function getC(){
+                let a = await $.ajax('./src/a.json')
+                let b = await $.ajax('./src/b.json')
+                let c = await $.ajax('./src/c.json')
+                console.log(a,b,c)
+            })()
+        })
+        </script>
+</body>
+</html>
