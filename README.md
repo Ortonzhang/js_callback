@@ -149,8 +149,51 @@ async函数是generator函数的语法糖，只是将`*`变成了async，`yield`
 
 async函数可以看成一个包含多个异步操作的promise的对象，await就是then的语法糖。
 
+
 四种方式中最精简的方式。使用async处理回调函数，代码会异常的清新，我们写起来也会很爽很舒服。
 
 为什么会有这种感觉呢？
 
 因为它是最符合我们写代码的习惯，用同步的写法去解决异步的代码。
+
+
+
+### 换个xhr：
+
+使用[fetch](https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API)来实现。
+
+
+``` 
+
+### generator
+
+function getUrl(url){
+	fetch(url).then((data)=>{
+		generator.next(data.json())
+	})	
+}
+
+function* test(){
+	var a = yield getUrl('./src/a.json')
+	aJson.then(data=>{
+		console.log(data)
+	})
+}
+
+var generator = test()
+generator.next();
+
+
+### async
+
+(async ()=>{
+	
+	let a = await fetch('./src/a.json')
+	let aJson = a.json()
+	aJson.then((data)=>{
+		console.log(data)
+	})
+})()
+
+
+```
