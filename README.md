@@ -11,7 +11,7 @@
 
 ### 构建配置简述：
     
-gulpfile.js文件是gulp的配置文件,类似Gruntfile.js和webpack.config.js。
+gulpfile.js文件是gulp的配置文件,类似Gruntfile.js和webpack.config.js。
 
 使用[gulp-webserver](https://www.npmjs.com/package/gulp-webserver)插件来运行本地的Web服务器与LiveReload。
 
