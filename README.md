@@ -11,7 +11,7 @@
 
 ### 构建配置简述：
     
-gulpfile.js文件是gulp的配置文件，类似Gruntfile.js和webpack.config.js。
+gulpfile.js文件是gulp的配置文件,类似Gruntfile.js和webpack.config.js。
 
 使用[gulp-webserver](https://www.npmjs.com/package/gulp-webserver)插件来运行本地的Web服务器与LiveReload。
 
@@ -39,7 +39,7 @@ demo中src文件里有a、b、c三个json文件，需求是我们需要依次请
 
 ### ES5 - 金字塔
 
-首先我们来到ES5的时代，为完成以上的需求写下如下的代码：
+首先我们来到ES5的时代,为完成以上的需求写下如下的代码：
 ```
   $.ajax('./src/a.json').done((a)=>{
 
@@ -64,7 +64,7 @@ demo中src文件里有a、b、c三个json文件，需求是我们需要依次请
 
 我们来到了ES6的时代，这个时代的有个产物叫做[promise](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)。
 
-通过promise我们可以将代码链式的调用改成如下的代码
+通过promise我们可以将代码链式的调用改成如下的代码
 ```
 function request(url){
 	return new Promise((resolve, reject)=>{
