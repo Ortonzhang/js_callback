@@ -158,10 +158,7 @@ async函数可以看成一个包含多个异步操作的promise的对象，await
 
 
 
-### 换个xhr：
-
-使用[fetch](https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API)来实现。
-
+### 换个HTTP库，这里使用[fetch](https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API)来实现
 
 ``` 
 
@@ -195,5 +192,6 @@ generator.next();
 	})
 })()
 
-
 ```
+
+fetch(url)，需要加上一句 response.json() 来从 response 流对象中获取数据，返回的是个promise对象
